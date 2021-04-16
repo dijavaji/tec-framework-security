@@ -1,0 +1,69 @@
+<!--
+    Document   : componente de barra de menu arriba
+    Created on : 07-09-2014
+    Author     : thc
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+    xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:te="http://java.sun.com/jsf/composite/components/tipoUsuario"> 
+	<composite:interface shortDescription="Componente para la barra de navegacion del header">
+	</composite:interface>
+	<composite:implementation>
+		<div id="#{cc.clientId}">
+			<p:megaMenu orientation="horizontal" style="margin-top:5px">
+				<p:submenu >
+		 		
+		        <p:column>
+		            <p:submenu label="Personal">
+		                <p:menuitem value="Docentes" url="#" />
+		                <p:menuitem value="Administrativos" url="#" />
+		            </p:submenu>
+		            <p:submenu label="Alumnos">
+		                <p:menuitem value="Admisi&#243;n" url="#" />
+		                <p:menuitem value="Estudiante" url="#" />
+		                <p:menuitem value="Consulta de notas" url="#" />
+		            </p:submenu>
+		        </p:column>
+		        <p:column>
+		            <p:submenu label="Evaluaciones">
+		                <p:menuitem value="Examen en linea" url="#" />
+		                <p:menuitem value="Crear examen" url="#" />
+		            </p:submenu>
+		            <p:submenu label="Profesor">
+		                <p:menuitem value="Perfil" url="#" />
+		                <p:menuitem value="Evaluaciones" url="#" />
+		            </p:submenu>
+		        </p:column>
+		        <p:column>
+		            <p:submenu label="Administradores">
+		                <p:menuitem value="Instituci&#243;n" action="#{tipoUsuarioBackBean.loadListTipoUsuario()}" />
+		                <p:menuitem value="Aulas" url="#" />
+		                <p:menuitem value="Materias" url="#" />
+		                <p:menuitem value="Tipo Usuario" action="#{tipoUsuarioBackBean.loadListTipoUsuario()}"/>
+		            </p:submenu>
+		        </p:column>
+		        <p:column>
+        </p:column>
+		    </p:submenu>
+		     <p:menuitem>
+			    	<p:inputText style="position:absolute; right:60px;"></p:inputText>
+			    </p:menuitem>			
+		    <p:menuitem>
+			    	<p:commandLink  action="#" style="position:absolute; right:30px;">
+						<p:graphicImage value="./resources/images/mail.png" styleClass="normal" />
+					</p:commandLink>
+			    </p:menuitem>		 
+			    <p:menuitem>
+			    	<p:commandLink  action="#" style="position:absolute; right:0px;">
+						<p:graphicImage value="./resources/images/user.png" styleClass="normal" />
+					</p:commandLink>
+			    </p:menuitem>
+			    
+			</p:megaMenu>
+		</div>
+	</composite:implementation>
+</ui:composition>

@@ -1,0 +1,45 @@
+<!--
+    Document   : componente de login
+    Created on : 03-09-2014
+    Author     : thc
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:composite="http://java.sun.com/jsf/composite"
+    xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+    xmlns:ui="http://java.sun.com/jsf/facelets"> 
+	<composite:interface shortDescription="Componente para el ingreso del login de usuario ">
+		<composite:attribute name="delegateController" type="java.lang.String"/>
+	</composite:interface>
+	<composite:implementation>
+
+		<div id="#{cc.clientId}">
+		<p:panel id="pnlLogin" header="Iniciar sesi&#243;n" style="margin-bottom:20px">
+		<h:panelGrid columns="3" cellpadding="5" cellspacing="0">
+
+               <h:outputLabel value="#{msg_wvcs['user.id']}"/>
+               <p:inputText  id="itxUser" value="#{user.userName}" required="true" requiredMessage="#{bundle['user.id.validation']}"/>
+               <p:message id="msgUser" for="itxUser" errorClass="errorCampo" />
+
+               <h:outputLabel value="#{msg_wvcs['user.id']}"/>
+               <p:password  id="pswClave" value="#{user.pass}" required="true" requiredMessage="#{bundle['user.password.validation']}"/>
+               <p:message id="msgClave" for="pswClave" errorClass="errorCampo" />
+
+              <p:spacer height="10" />
+               
+               <!-- <h:outputLabel value=" "/> -->
+               <f:facet name="footer">
+                   <h:panelGroup >
+                   	<h:commandButton  value="#{msg_wvcs['application.login']}"  id="Btingresar" title="Ingresar" action="#{cc.attrs.delegateController.login}" />
+                    <h:link value="#{msg_wvcs['application.loginpage.register']}" outcome="registration"/>
+                    <br/><br/>
+					<h:messages styleClass="errorMessage"/>
+          		</h:panelGroup>
+                   
+               </f:facet>
+		</h:panelGrid>	
+		</p:panel>
+		</div>
+	</composite:implementation>
+</ui:composition>

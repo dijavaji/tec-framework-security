@@ -1,0 +1,43 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>tec-fwk-security-ear</artifactId>
+	<packaging>ear</packaging>
+	
+	<parent>
+		<groupId>ec.com.technoloqie.fwk.security</groupId>
+		<artifactId>tec-fwk-security-root</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../tec-fwk-security-root</relativePath>
+	</parent>
+	<dependencies>
+	  <dependency>
+	    <groupId>ec.com.technoloqie.fwk.security</groupId>
+	    <artifactId>tec-fwk-security-web</artifactId>
+	    <version>${project.version}</version>
+	    <type>war</type>
+	  </dependency>
+	</dependencies>
+	<build>
+	  <plugins>
+	    <plugin>
+	      <artifactId>maven-ear-plugin</artifactId>
+	      <version>2.9</version>
+	      <configuration>
+	        <earSourceDirectory>EarContent</earSourceDirectory>
+	        <displayName>fwkSecurity</displayName>
+	        <generateApplicationXml>false</generateApplicationXml>
+	        <version>6</version>
+	        <defaultLibBundleDir>lib</defaultLibBundleDir>
+	        <modules>
+	        	<webModule>
+	        		<groupId>ec.com.technoloqie.fwk.security</groupId>
+	    			<artifactId>tec-fwk-security-web</artifactId>
+	    			<bundleFileName>tec-fwk-security-web.war</bundleFileName>
+	    			<contextRoot>/tec-security-web</contextRoot>
+	        	</webModule>
+	        </modules>
+	      </configuration>
+	    </plugin>
+	  </plugins>
+	</build>
+</project>
