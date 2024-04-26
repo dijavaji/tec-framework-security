@@ -60,10 +60,6 @@ public class Customer implements Serializable{
 	@Column(name="STATUS")
 	private Boolean status;
 	
-	//@ManyToOne
-	//@JoinColumn(name="tip_id",nullable=false)
-	//private TipoUsuario tipId;
-	
 	@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "PERSONID", nullable=false)
     private Person person;

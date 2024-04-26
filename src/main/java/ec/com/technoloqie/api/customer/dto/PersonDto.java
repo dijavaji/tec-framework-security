@@ -16,11 +16,12 @@ public class PersonDto {
 	private String firstName; //atributo nombre
 	private String lastName; //atributo apellido
 	private String gender;
-	private Integer age;
+	//private Integer age;
+	private Date birthDate;
 	private String idn;// atributo identificacion
 	private String address;// atributo direccion
 	private String phone;// telefono
-	private String email;// email
+	//private String email;// email
 	private String createdBy;
 	private Date createdDate;
 	private String modifiedBy;
