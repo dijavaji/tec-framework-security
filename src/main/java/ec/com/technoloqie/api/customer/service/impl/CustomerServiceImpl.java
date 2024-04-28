@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ec.com.technoloqie.api.customer.commons.exception.CustomerWSException;
+import ec.com.technoloqie.api.customer.commons.exception.AuthWSException;
 import ec.com.technoloqie.api.customer.dto.CustomerDto;
 import ec.com.technoloqie.api.customer.entity.Customer;
 import ec.com.technoloqie.api.customer.mapper.CustomerMapper;
@@ -38,13 +38,13 @@ public class CustomerServiceImpl implements ICustomerService{
 
 	@Override
 	public CustomerDto getCustomerId(Integer code) {
-		Customer customer = this.customerRepo.findById(code).orElseThrow(()-> new CustomerWSException("Error el cliente no existe"));
+		Customer customer = this.customerRepo.findById(code).orElseThrow(()-> new AuthWSException("Error el cliente no existe"));
 		return CustomerMapper.mapToCustomerDto(customer);
 	}
 
 	@Override
 	public CustomerDto updateCustomer(CustomerDto customer, int id) {
-		Customer existCustomer = this.customerRepo.findById(id).orElseThrow(()-> new CustomerWSException("Error el cliente no existe")); //tenemos que comprobar si con la identificación dada existe en la db o no
+		Customer existCustomer = this.customerRepo.findById(id).orElseThrow(()-> new AuthWSException("Error el cliente no existe")); //tenemos que comprobar si con la identificación dada existe en la db o no
 		existCustomer.setPass(customer.getPass());
 		existCustomer.setModifiedBy(customer.getModifiedBy());
 		existCustomer.setModifiedDate(new Date());
