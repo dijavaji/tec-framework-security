@@ -23,7 +23,7 @@ import jakarta.validation.Valid;
 
 //@CrossOrigin(origins = {"http://127.0.0.1:4200"})
 @RestController
-@RequestMapping("/api/v1/customers")
+@RequestMapping("${ec.com.technoloqie.fwk.security.api.prefix}/customers")
 public class CustomerRestController {
 	
 	 @Value("${spring.application.name}")
