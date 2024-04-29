@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import ec.com.technoloqie.api.customer.entity.UserType;
 
-public interface ITypeUserRepository extends JpaRepository<UserType, Integer> {
+public interface IUserTypeRepository extends JpaRepository<UserType, Integer> {
 	
 	Optional<UserType> findByName(String name);
 }

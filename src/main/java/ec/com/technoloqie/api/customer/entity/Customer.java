@@ -60,9 +60,6 @@ public class Customer implements Serializable{
 	@Column(name="STATUS")
 	private Boolean status;
 	
-	@OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "PERSONID", nullable=false)
-    private Person person;
 	
 	@PrePersist 
 	public void prePersist() {

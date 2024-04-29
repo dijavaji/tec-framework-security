@@ -6,21 +6,21 @@ import ec.com.technoloqie.api.customer.entity.Person;
 public class PersonMapper {
 	
 	public static Person mapToPerson(PersonDto personDto) {
-		return new Person(
-				personDto.getId(),
-				personDto.getFirstName(), 
-				personDto.getLastName(), 
-				personDto.getGender(),
-				personDto.getBirthDate(),
-				personDto.getIdn(),
-				personDto.getAddress(),
-				personDto.getPhone(),
-				personDto.getCreatedBy(),
-				personDto.getCreatedDate(),
-				personDto.getModifiedBy(),
-				personDto.getModifiedDate(),
-				personDto.getStatus()
-				);
+		Person person = new Person();
+		person.setId(personDto.getId());
+		person.setFirstName(personDto.getFirstName()); 
+		person.setLastName(personDto.getLastName()); 
+		person.setGender(personDto.getGender()); 
+		person.setBirthDate(personDto.getBirthDate()); 
+		person.setIdn(personDto.getIdn()); 
+		person.setAddress(personDto.getAddress());
+		person.setPhone(personDto.getPhone());
+		person.setCreatedBy(personDto.getCreatedBy());
+		person.setCreatedDate(personDto.getCreatedDate()); 
+		person.setModifiedBy(personDto.getModifiedBy()); 
+		person.setModifiedDate(personDto.getModifiedDate()); 
+		person.setStatus(personDto.getStatus());
+		return person;
 	}
 	
 	public static PersonDto mapToPersonDto(Person person) {

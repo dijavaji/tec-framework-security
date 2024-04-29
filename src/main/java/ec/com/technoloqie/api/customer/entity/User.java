@@ -3,7 +3,6 @@ package ec.com.technoloqie.api.customer.entity;
 import java.io.Serializable;
 import java.util.Date;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,11 +10,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -69,9 +68,10 @@ public class User implements Serializable{
 	@JoinColumn(name = "USERTYPEID", nullable = false)
 	private UserType userType;
 	
-	@OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "PERSONID", nullable=false)
-    private Person person;
+	//@OneToOne(cascade = CascadeType.ALL)
+    //@JoinColumn(name = "PERSONID", nullable=false)
+    @Transient
+	private Person person;
 	
 	@PrePersist 
 	public void prePersist() {

@@ -13,8 +13,7 @@ public class CustomerMapper {
 				customerDto.getCreatedDate(),
 				customerDto.getModifiedBy(),
 				customerDto.getModifiedDate(),
-				customerDto.getStatus(),
-				PersonMapper.mapToPerson(customerDto.getPerson())
+				customerDto.getStatus()
 				);
 	}
 	
@@ -27,7 +26,7 @@ public class CustomerMapper {
 				customer.getModifiedBy(),
 				customer.getModifiedDate(),
 				customer.getStatus(),
-				PersonMapper.mapToPersonDto(customer.getPerson())
+				null
 				);
 	}
 }

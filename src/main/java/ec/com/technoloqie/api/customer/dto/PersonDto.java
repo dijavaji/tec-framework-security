@@ -18,14 +18,18 @@ public class PersonDto {
 	private String gender;
 	//private Integer age;
 	private Date birthDate;
-	private String idn;// atributo identificacion
-	private String address;// atributo direccion
-	private String phone;// telefono
+	private String idn;
+	private String address;
+	private String phone;
 	//private String email;// email
 	private String createdBy;
 	private Date createdDate;
 	private String modifiedBy;
 	private Date modifiedDate;
 	private Boolean status;
+	
+	public enum Gender{
+		M, F //, JOIN
+	}
 	
 }

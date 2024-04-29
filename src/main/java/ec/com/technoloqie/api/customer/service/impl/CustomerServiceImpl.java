@@ -32,7 +32,7 @@ public class CustomerServiceImpl implements ICustomerService{
 	@Override
 	public CustomerDto createCustomer(CustomerDto customerDto) {
 		Customer customer = CustomerMapper.mapToCustomer(customerDto);
-		log.info("inserta cliente {}", customer.getPerson().getFirstName());
+		log.info("inserta cliente {}", customer);
 		return CustomerMapper.mapToCustomerDto(customerRepo.save(customer));
 	}
 

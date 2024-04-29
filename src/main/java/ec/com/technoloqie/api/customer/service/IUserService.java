@@ -8,8 +8,6 @@ import ec.com.technoloqie.api.customer.dto.UserDto;
 
 public interface IUserService {
 	
-    Boolean existsByUsername(String username) throws AuthWSException;
-    Boolean existsByEmail(String email) throws AuthWSException;
     Collection<UserDto> getListUsers() throws AuthWSException;
 	UserDto createUser(SignUpDto user) throws AuthWSException;
 	//CustomerDto getUserId(Integer code);
