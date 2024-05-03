@@ -4,11 +4,18 @@ import java.util.Collection;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ec.com.technoloqie.fwk.security.api.commons.exception.AuthWSException;
+import ec.com.technoloqie.fwk.security.api.commons.util.JwtTokenUtils;
+import ec.com.technoloqie.fwk.security.api.dto.LoginDto;
 import ec.com.technoloqie.fwk.security.api.dto.SignUpDto;
 import ec.com.technoloqie.fwk.security.api.dto.UserDto;
 import ec.com.technoloqie.fwk.security.api.entity.Person;
@@ -36,7 +43,10 @@ public class UserServiceImpl implements IUserService{
 	
 	@Autowired
     private PasswordEncoder passwordEncoder;
-
+	@Autowired
+	private AuthenticationManager authenticationManager;
+	
+	
 	@Override
 	@Transactional(readOnly = true)
 	public Collection<UserDto> getListUsers() {
@@ -73,6 +83,22 @@ public class UserServiceImpl implements IUserService{
 			throw new AuthWSException("Error al momento de crear usuario",e);
 		}
 	}
-	
 
+	@Override
+	public String login(LoginDto loginDto) throws AuthWSException {
+		
+		User user = this.userRepository.findByUsernameOrEmail(loginDto.getUsernameOrEmail(), loginDto.getUsernameOrEmail())
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("Usuario no registrado: "+ loginDto.getUsernameOrEmail()));
+		
+		
+		Authentication authentication = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                loginDto.getUsernameOrEmail(), loginDto.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        
+        String token = JwtTokenUtils.createToken(loginDto.getUsernameOrEmail(), loginDto.getPassword()); //JwtTokenUtils.generateToken(authentication);
+
+        return token;
+	}
+	
 }
