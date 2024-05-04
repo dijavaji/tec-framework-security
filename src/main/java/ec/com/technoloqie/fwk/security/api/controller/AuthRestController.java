@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ec.com.technoloqie.fwk.security.api.commons.exception.AuthWSException;
+import ec.com.technoloqie.fwk.security.api.dto.JWTAuthResponse;
 import ec.com.technoloqie.fwk.security.api.dto.LoginDto;
 import ec.com.technoloqie.fwk.security.api.dto.SignUpDto;
 import ec.com.technoloqie.fwk.security.api.dto.UserDto;
@@ -34,8 +35,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("${ec.com.technoloqie.fwk.security.api.prefix}/auth")
 public class AuthRestController {
 
-	@Autowired
-	private AuthenticationManager authenticationManager;
+	//@Autowired
+	//private AuthenticationManager authenticationManager;
 
 	@Autowired
 	private IUserService userService;
@@ -50,13 +51,22 @@ public class AuthRestController {
 	
 	@PostMapping("/signin")
 	@ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<String> authenticateUser(@RequestBody LoginDto loginDto){
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginDto loginDto){
 		log.info("message is: {}", loginDto.getUsernameOrEmail());
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                loginDto.getUsernameOrEmail(), loginDto.getPassword()));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        return new ResponseEntity<>("User signed-in successfully!.", HttpStatus.OK);
+		Map <String, Object> response = new HashMap<>();
+		try {
+			String token = this.userService.login(loginDto);
+			response.put("accessToken", token);
+			response.put("success", Boolean.TRUE);
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.CREATED);
+		}catch(Exception e) {
+			log.error("Error al momento de ingresar usuario.");
+			response.put("message", "Error al momento de ingresar usuario.");
+			response.put("error", e.getMessage() +" : " + e);
+			response.put("success", Boolean.FALSE);
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+        //return new ResponseEntity<>("User signed-in successfully!.", HttpStatus.OK);
     }
 	
 	@PostMapping("/signup")
@@ -86,6 +96,17 @@ public class AuthRestController {
 		response.put("success", Boolean.TRUE);
 		return new ResponseEntity<Map<String,Object>>(response, HttpStatus.CREATED);
         //return new ResponseEntity<>(this.userService.createUser(signUpDto), HttpStatus.CREATED);
+    }
+	
+    // Build Login REST API
+    //@PostMapping("/login")
+    public ResponseEntity<JWTAuthResponse> authenticate(@RequestBody LoginDto loginDto){
+        String token = userService.login(loginDto);
+
+        JWTAuthResponse jwtAuthResponse = new JWTAuthResponse();
+        jwtAuthResponse.setAccessToken(token);
+
+        return ResponseEntity.ok(jwtAuthResponse);
     }
 	
 }
