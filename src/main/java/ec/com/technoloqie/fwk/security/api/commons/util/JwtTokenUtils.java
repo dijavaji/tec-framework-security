@@ -29,7 +29,7 @@ public class JwtTokenUtils {
 
     @Value("${ec.com.technoloqie.fwk.security.jwt.acces.token.secret}")
     //private static String jwtSecret;
-    private final static String ACCES_TOKEN_SECRET = "6ccd4ed8b9b02c0cf0276f0f06c24c6c90739da87fc5cd06c12d5f563c577a2f";
+    private final static String ACCES_TOKEN_SECRET = "";
 
     @Value("${ec.com.technoloqie.fwk.security.jwt.expiration-milliseconds}")
     private final static long jwtExpirationDate= 2592000;
@@ -59,15 +59,35 @@ public class JwtTokenUtils {
 		Map< String, Object> extra = new HashMap<>();
 		extra.put("nombre", nombre);
 		extra.put("email", email);
+		extra.put("userType", 1);
 		
 		return Jwts.builder()
 				.setSubject(email)
 				.setIssuedAt(new Date())
+				.setIssuer("technoloqie.website")
 				.setAudience("urn: technoloqie.website.api.v1")
 				.setExpiration(expirationDate) //.addClaims(extra).signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes())).compact();
 				.addClaims(extra).signWith(key()).compact();
 		
 	}
+    
+    public String signRefreshToken(String userId) {
+    	long expirationTime = jwtExpirationDate * 1000;
+		//Date expirationDate = new Date(System.currentTimeMillis() + expirationTime);
+    	Date expirationDate = new Date(System.currentTimeMillis() + expirationTime);
+		Map< String, Object> extra = new HashMap<>();
+		//extra.put("nombre", nombre);
+		//extra.put("email", email);
+		//extra.put("userType", 1);
+		
+		return Jwts.builder()
+				.setSubject(email)
+				.setIssuedAt(new Date())
+				.setIssuer("technoloqie.website")
+				.setAudience("urn: technoloqie.website.api.v1")
+				.setExpiration(expirationDate) //.addClaims(extra).signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes())).compact();
+				.addClaims(extra).signWith(key()).compact();
+    }
 
     private static Key key(){
         return Keys.hmacShaKeyFor(
