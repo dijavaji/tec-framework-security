@@ -1,4 +1,4 @@
-package ec.com.technoloqie.fwk.security.api.config.auth;
+package ec.com.technoloqie.fwk.security.api.dto;
 
 import lombok.Data;
 import lombok.Getter;
@@ -8,6 +8,6 @@ import lombok.Setter;
 @Data
 public class AuthCredential {
 	
-	private String email;
+	private String email;	//se puede utilizar UsernameOrEmail
 	private String password;
 }

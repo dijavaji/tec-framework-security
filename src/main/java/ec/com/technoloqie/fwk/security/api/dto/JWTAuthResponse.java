@@ -16,4 +16,9 @@ public class JWTAuthResponse {
 	private String refreshToken;
     private String tokenType = AuthWSConstants.JWT_TOKEN_TYPE;
     
+    public JWTAuthResponse(String accessToken, String refreshToken) {
+    	this.accessToken = accessToken;
+    	this.refreshToken = refreshToken;
+    }
+    
 }
