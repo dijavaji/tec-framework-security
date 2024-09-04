@@ -10,13 +10,13 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-import org.apache.log4j.Logger;
+import ec.com.technoloqie.framework.security.ejb.commons.log.SecurityLog;
 
 
 
 public abstract class AbstractManager<T>{
 	private Class<T> entityClass;
-	private static Logger logger = Logger.getLogger(AbstractManager.class);
+	//private static Logger logger = Logger.getLogger(AbstractManager.class);
 
     public AbstractManager(Class<T> entityClass) {
         this.entityClass = entityClass;
@@ -29,7 +29,8 @@ public abstract class AbstractManager<T>{
     		getEntityManager().persist(entity);
     		//getEntityManager().flush();
     	}catch(EJBException e){
-			logger.info(">>>> create: " + e.getMessage() + " - Entidad: " + entity.toString());
+    		SecurityLog.getLog().error(">>>> create: - Entidad: " + entity.toString(), e);
+			//logger.info(">>>> create: " + e.getMessage() + " - Entidad: " + entity.toString());
     	}
     }
 
@@ -38,7 +39,8 @@ public abstract class AbstractManager<T>{
     		getEntityManager().merge(entity);
     		//getEntityManager().flush();
     	}catch(EJBException e){
-			logger.info(">>>> edit: " + e.getMessage() + " - Entidad: " + entity.toString());
+			//logger.info(">>>> edit: " + e.getMessage() + " - Entidad: " + entity.toString());
+    		SecurityLog.getLog().error(">>>> edit: - Entidad: " + entity.toString(), e);
     	}
     }
 
@@ -47,7 +49,8 @@ public abstract class AbstractManager<T>{
     		T managed = getEntityManager().merge(entity);
     		getEntityManager().remove(managed);
     	}catch(EJBException e){
-			logger.info(">>>> remove: " + e.getMessage() + " - Entidad: " + entity.toString());
+			//logger.info(">>>> remove: " + e.getMessage() + " - Entidad: " + entity.toString());
+    		SecurityLog.getLog().error(">>>> remove: - Entidad: " + entity.toString(), e);
     	}
     }
 
@@ -55,8 +58,8 @@ public abstract class AbstractManager<T>{
     	try{    	
     		return getEntityManager().find(entityClass, id);
     	}catch(EJBException e){
-			logger.info(">>>> find: " + e.getMessage() + " - entityClass: " + entityClass.getName() +
-					" - id: " + id.toString());
+			//logger.info(">>>> find: " + e.getMessage() + " - entityClass: " + entityClass.getName() + " - id: " + id.toString());
+    		SecurityLog.getLog().error(">>>> find: - entityClass: " + entityClass.getName() + " - id: " + id.toString(), e);
 			return null;
     	}    		
     }
@@ -67,7 +70,8 @@ public abstract class AbstractManager<T>{
     		cq.select(cq.from(entityClass));
     		return getEntityManager().createQuery(cq).getResultList();
     	}catch(EJBException e){
-			logger.info(">>>> findAll: " + e.getMessage() + " - entityClass: " + entityClass.getName());
+			//logger.info(">>>> findAll: " + e.getMessage() + " - entityClass: " + entityClass.getName());
+    		SecurityLog.getLog().error(">>>> findAll: - entityClass: " + entityClass.getName(), e);
 			return null;
     	}      		
     }
@@ -81,8 +85,8 @@ public abstract class AbstractManager<T>{
 	        q.setFirstResult(range[0]);
 	        return q.getResultList();
     	}catch(EJBException e){
-			logger.info(">>>> findRange: " + e.getMessage() + " - entityClass: " + entityClass.getName() + 
-					" - range: " + Arrays.toString(range));
+			//logger.info(">>>> findRange: " + e.getMessage() + " - entityClass: " + entityClass.getName() +" - range: " + Arrays.toString(range));
+    		SecurityLog.getLog().error(">>>> findRange: - entityClass: " + entityClass.getName()+" - range: " + Arrays.toString(range), e);
 			return null;
     	}	        
     }
@@ -95,7 +99,8 @@ public abstract class AbstractManager<T>{
 	        Query q = getEntityManager().createQuery(cq);
 	        return ((Long) q.getSingleResult()).intValue();
     	}catch(EJBException e){
-			logger.info(">>>> count: " + e.getMessage() + " - entityClass: " + entityClass.getName());
+			//logger.info(">>>> count: " + e.getMessage() + " - entityClass: " + entityClass.getName());
+    		SecurityLog.getLog().error(">>>> count: - entityClass: " + entityClass.getName(), e);
 			return -1;
     	}		        
     }
