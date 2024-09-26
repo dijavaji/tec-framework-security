@@ -7,10 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,8 +17,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ec.com.technoloqie.fwk.security.api.commons.exception.AuthWSException;
+import ec.com.technoloqie.fwk.security.api.dto.AuthCredential;
 import ec.com.technoloqie.fwk.security.api.dto.JWTAuthResponse;
-import ec.com.technoloqie.fwk.security.api.dto.LoginDto;
 import ec.com.technoloqie.fwk.security.api.dto.SignUpDto;
 import ec.com.technoloqie.fwk.security.api.dto.UserDto;
 import ec.com.technoloqie.fwk.security.api.service.IUserService;
@@ -51,16 +47,23 @@ public class AuthRestController {
 	
 	@PostMapping("/signin")
 	@ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginDto loginDto){
-		log.info("message is: {}", loginDto.getUsernameOrEmail());
+    public ResponseEntity<?> authenticateUser(@RequestBody AuthCredential loginDto){
+		log.info("message is: {}", loginDto.getEmail());
 		Map <String, Object> response = new HashMap<>();
 		try {
-			String token = this.userService.login(loginDto);
-			response.put("accessToken", token);
-			response.put("success", Boolean.TRUE);
-			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.CREATED);
+			JWTAuthResponse token = this.userService.login(loginDto);
+			//response.put("data", token);
+			//response.put("success", Boolean.TRUE);
+			return new ResponseEntity<>(token, HttpStatus.CREATED);
+		}catch(AuthWSException e) {
+			log.error("Error authenticateUser {}", e);
+			response.put("message", e.getMessage());
+			response.put("error", e.getMessage() +" : " + e);
+			response.put("success", Boolean.FALSE);
+			return new ResponseEntity<Map<String,Object>>(response, HttpStatus.UNAUTHORIZED);
+			
 		}catch(Exception e) {
-			log.error("Error al momento de ingresar usuario.");
+			log.error("Error al momento de ingresar usuario. {}",e);
 			response.put("message", "Error al momento de ingresar usuario.");
 			response.put("error", e.getMessage() +" : " + e);
 			response.put("success", Boolean.FALSE);
@@ -98,15 +101,5 @@ public class AuthRestController {
         //return new ResponseEntity<>(this.userService.createUser(signUpDto), HttpStatus.CREATED);
     }
 	
-    // Build Login REST API
-    //@PostMapping("/login")
-    public ResponseEntity<JWTAuthResponse> authenticate(@RequestBody LoginDto loginDto){
-        String token = userService.login(loginDto);
-
-        JWTAuthResponse jwtAuthResponse = new JWTAuthResponse();
-        jwtAuthResponse.setAccessToken(token);
-
-        return ResponseEntity.ok(jwtAuthResponse);
-    }
 	
 }

@@ -11,6 +11,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ec.com.technoloqie.fwk.security.api.commons.util.JwtTokenUtils;
+import ec.com.technoloqie.fwk.security.api.dto.AuthCredential;
 import ec.com.technoloqie.fwk.security.api.entity.UserDetailsImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter{
-	
 	
 	@SuppressWarnings("static-access")
 	@Override

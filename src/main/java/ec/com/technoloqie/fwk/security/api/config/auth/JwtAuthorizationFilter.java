@@ -6,12 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import ec.com.technoloqie.fwk.security.api.commons.util.JwtTokenUtils;
+import ec.com.technoloqie.fwk.security.api.service.impl.CustomUserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +24,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
 	
 	//private JwtTokenUtils jwtTokenProvider;
 	@Autowired
-    private UserDetailsService userDetailsService;
+    private CustomUserDetailsServiceImpl userDetailsService;
+	@Autowired
+	private JwtTokenUtils jwtTokenUtils;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -36,15 +38,15 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
         String token = getTokenFromRequest(request);
 		
         //if(bearerToken != null && bearerToken.startsWith("Bearer ")) {
-        if(StringUtils.hasText(token) && JwtTokenUtils.validateToken(token)) {
+        if(StringUtils.hasText(token) && this.jwtTokenUtils.validateToken(token)) {
 			//String token = bearerToken.replace("Bearer ", "");
         	 // get username from token
-            String username = JwtTokenUtils.getUsername(token);
+            String username = this.jwtTokenUtils.getUsername(token);
             log.info("get username from token {}",username);
          // load the user associated with token
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-        	UsernamePasswordAuthenticationToken usernamePat = JwtTokenUtils.getAuthentication(token);
+        	UsernamePasswordAuthenticationToken usernamePat = this.jwtTokenUtils.getAuthentication(userDetails);
 			SecurityContextHolder.getContext().setAuthentication(usernamePat); 
 		}
 		filterChain.doFilter(request, response);
