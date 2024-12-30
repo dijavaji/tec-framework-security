@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +19,7 @@ import ec.com.technoloqie.fwk.security.api.dto.SignUpDto;
 import ec.com.technoloqie.fwk.security.api.dto.UserDto;
 import ec.com.technoloqie.fwk.security.api.entity.Person;
 import ec.com.technoloqie.fwk.security.api.entity.User;
+import ec.com.technoloqie.fwk.security.api.entity.UserDetailsImpl;
 import ec.com.technoloqie.fwk.security.api.entity.UserType;
 import ec.com.technoloqie.fwk.security.api.mapper.PersonMapper;
 import ec.com.technoloqie.fwk.security.api.mapper.UserMapper;
@@ -94,7 +94,7 @@ public class UserServiceImpl implements IUserService{
 	public JWTAuthResponse login(AuthCredential loginDto) throws AuthWSException {
 		
 		//User user = this.userRepository.findByUsernameOrEmail(loginDto.getEmail(), loginDto.getEmail()).orElseThrow(() ->new AuthWSException("Usuario no registrado: "+ loginDto.getEmail()));
-		UserDetails user = this.userDetailsService.loadUserByUsername(loginDto.getEmail());
+		UserDetailsImpl user = this.userDetailsService.loadUserByUsername(loginDto.getEmail());
 		
 		if(!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
 			throw new AuthWSException("Usuario o password no valido");
@@ -107,7 +107,7 @@ public class UserServiceImpl implements IUserService{
 		Authentication authentication = this.jwtTokenUtils.getAuthentication(user);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
         
-		String token = this.jwtTokenUtils.createToken(user.getUsername(), loginDto.getEmail()); //JwtTokenUtils.generateToken(authentication);
+		String token = this.jwtTokenUtils.createToken(user.getUsername(), loginDto.getEmail(), user.getUserType().getId()); //JwtTokenUtils.generateToken(authentication);
         //TODO insertar token en redis con vencimiento en segundos
         String tokenRefresh = jwtTokenUtils.signRefreshToken(user.getUsername());
 

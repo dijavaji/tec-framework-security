@@ -2,7 +2,6 @@ package ec.com.technoloqie.fwk.security.api.commons.util;
 
 
 import java.security.Key;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,8 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
+import ec.com.technoloqie.fwk.security.api.commons.AuthWSConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -22,21 +23,21 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
-//@Component
+@Component
 public class JwtTokenUtils {
 	
 	private static final Logger logger = LoggerFactory.getLogger(JwtTokenUtils.class);
 
     @Value("${ec.com.technoloqie.fwk.security.jwt.acces.token.secret}")
     //private static String jwtSecret;
-    private final static String ACCES_TOKEN_SECRET = "";
+    private static String ACCES_TOKEN_SECRET = "6ccd4ed8b9b02c0cf0276f0f06c24c6c90739da87fc5cd06c12d5f563c577a2f";
 
     @Value("${ec.com.technoloqie.fwk.security.jwt.expiration-milliseconds}")
-    private final static long jwtExpirationDate= 2592000;
+    private static long jwtExpirationDate = 2592000;
     //private final static long ACCES_TOKEN_VALIDITY_SECONDS= 1800;//30min  //2592000 30dias*24horasx3600s
     
     // generate JWT token
-    public static String generateToken(Authentication authentication){
+    /*public String generateToken(Authentication authentication){
     	 String username = authentication.getName();
 
          Date currentDate = new Date();
@@ -50,29 +51,30 @@ public class JwtTokenUtils {
                 .signWith(key())
                 .compact();
         return token;
-    }
+    }*/
     
-    public static String createToken(String nombre, String email) {
+    public static String createToken(String nombre, String email, Integer roles) {
 		long expirationTime = jwtExpirationDate * 1000;
 		//Date expirationDate = new Date(System.currentTimeMillis() + expirationTime);
     	Date expirationDate = new Date(System.currentTimeMillis() + expirationTime);
 		Map< String, Object> extra = new HashMap<>();
-		extra.put("nombre", nombre);
+		extra.put("username", nombre);
 		extra.put("email", email);
-		extra.put("userType", 1);
+		extra.put("roles", roles);
 		
 		return Jwts.builder()
 				.setSubject(email)
 				.setIssuedAt(new Date())
-				.setIssuer("technoloqie.website")
-				.setAudience("urn: technoloqie.website.api.v1")
+				.setIssuer(AuthWSConstants.JWT_ISSUER)
+				.setAudience(AuthWSConstants.JWT_AUDIENCE)
 				.setExpiration(expirationDate) //.addClaims(extra).signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes())).compact();
 				.addClaims(extra).signWith(key()).compact();
 		
 	}
     
     public String signRefreshToken(String userId) {
-    	long expirationTime = jwtExpirationDate * 1000;
+    	//agrego vencimiento de 1h
+    	long expirationTime = (jwtExpirationDate + 3600) * 1000;
 		//Date expirationDate = new Date(System.currentTimeMillis() + expirationTime);
     	Date expirationDate = new Date(System.currentTimeMillis() + expirationTime);
 		Map< String, Object> extra = new HashMap<>();
@@ -81,10 +83,10 @@ public class JwtTokenUtils {
 		//extra.put("userType", 1);
 		
 		return Jwts.builder()
-				.setSubject(email)
+				.setSubject(userId)
 				.setIssuedAt(new Date())
-				.setIssuer("technoloqie.website")
-				.setAudience("urn: technoloqie.website.api.v1")
+				.setIssuer(AuthWSConstants.JWT_ISSUER)
+				.setAudience(AuthWSConstants.JWT_AUDIENCE)
 				.setExpiration(expirationDate) //.addClaims(extra).signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes())).compact();
 				.addClaims(extra).signWith(key()).compact();
     }
@@ -96,7 +98,7 @@ public class JwtTokenUtils {
     }
 
     // get username from Jwt token
-    public static String getUsername(String token){
+    public  String getUsername(String token){
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key())
                 .build()
@@ -107,7 +109,7 @@ public class JwtTokenUtils {
     }
 
     // validate Jwt token
-    public static boolean validateToken(String token){
+    public boolean validateToken(String token){
         try{
             Jwts.parserBuilder()
                     .setSigningKey(key())
@@ -127,14 +129,13 @@ public class JwtTokenUtils {
     }
     
     @SuppressWarnings("static-access")
-	public static UsernamePasswordAuthenticationToken getAuthentication(String token) {
+	public UsernamePasswordAuthenticationToken getAuthentication(UserDetails userDetails) {
 		try {
-			Claims claims = Jwts.parserBuilder()
-					.setSigningKey(key()).build().parseClaimsJws(token).getBody();
+			//Claims claims = Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(token).getBody();
 			
-			String email = claims.getSubject();
-			
-			return new UsernamePasswordAuthenticationToken(email, null, Collections.emptyList());
+			//String email = claims.getSubject();
+			//logger.info("************** {}",userDetails.getUsername());
+			return new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
 		}catch(JwtException e) {
 			logger.error("Error al realizar autenticacion token incorrecto invalido o expirado.",e);
 			return null;

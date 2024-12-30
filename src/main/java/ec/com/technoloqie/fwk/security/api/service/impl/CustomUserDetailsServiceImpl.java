@@ -1,6 +1,5 @@
 package ec.com.technoloqie.fwk.security.api.service.impl;
 
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +18,7 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService{
 	    }
 
 	@Override
-	public UserDetails loadUserByUsername(String usernameOrEmail) throws AuthWSException {
+	public UserDetailsImpl loadUserByUsername(String usernameOrEmail) throws AuthWSException {
 		User user = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
                 .orElseThrow(() -> new AuthWSException("Usuario no registrado: "+ usernameOrEmail));
 		//Set<GrantedAuthority> authorities = user.getRoles().stream().map((role) -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toSet());
