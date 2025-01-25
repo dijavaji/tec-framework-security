@@ -1,10 +1,9 @@
 package ec.com.technoloqie.fwk.security.api.service.impl;
 
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import ec.com.technoloqie.fwk.security.api.commons.exception.AuthWSException;
 import ec.com.technoloqie.fwk.security.api.entity.User;
 import ec.com.technoloqie.fwk.security.api.entity.UserDetailsImpl;
 import ec.com.technoloqie.fwk.security.api.repository.IUserRepository;
@@ -19,10 +18,9 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService{
 	    }
 
 	@Override
-	public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
+	public UserDetailsImpl loadUserByUsername(String usernameOrEmail) throws AuthWSException {
 		User user = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException("User not found with username or email: "+ usernameOrEmail));
+                .orElseThrow(() -> new AuthWSException("Usuario no registrado: "+ usernameOrEmail));
 		//Set<GrantedAuthority> authorities = user.getRoles().stream().map((role) -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toSet());
 		//Set<GrantedAuthority> authorities  = new HashSet<GrantedAuthority>();
 		//authorities.add(new SimpleGrantedAuthority(user.getUserType().getName()));

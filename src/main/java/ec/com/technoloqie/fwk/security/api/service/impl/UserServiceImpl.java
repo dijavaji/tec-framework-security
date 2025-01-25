@@ -5,21 +5,21 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ec.com.technoloqie.fwk.security.api.commons.exception.AuthWSException;
 import ec.com.technoloqie.fwk.security.api.commons.util.JwtTokenUtils;
-import ec.com.technoloqie.fwk.security.api.dto.LoginDto;
+import ec.com.technoloqie.fwk.security.api.dto.AuthCredential;
+import ec.com.technoloqie.fwk.security.api.dto.JWTAuthResponse;
 import ec.com.technoloqie.fwk.security.api.dto.SignUpDto;
 import ec.com.technoloqie.fwk.security.api.dto.UserDto;
 import ec.com.technoloqie.fwk.security.api.entity.Person;
 import ec.com.technoloqie.fwk.security.api.entity.User;
+import ec.com.technoloqie.fwk.security.api.entity.UserDetailsImpl;
 import ec.com.technoloqie.fwk.security.api.entity.UserType;
 import ec.com.technoloqie.fwk.security.api.mapper.PersonMapper;
 import ec.com.technoloqie.fwk.security.api.mapper.UserMapper;
@@ -45,6 +45,12 @@ public class UserServiceImpl implements IUserService{
     private PasswordEncoder passwordEncoder;
 	@Autowired
 	private AuthenticationManager authenticationManager;
+	
+	@Autowired
+	private JwtTokenUtils jwtTokenUtils;
+	
+	@Autowired
+    private CustomUserDetailsServiceImpl userDetailsService;
 	
 	
 	@Override
@@ -85,20 +91,27 @@ public class UserServiceImpl implements IUserService{
 	}
 
 	@Override
-	public String login(LoginDto loginDto) throws AuthWSException {
+	public JWTAuthResponse login(AuthCredential loginDto) throws AuthWSException {
 		
-		User user = this.userRepository.findByUsernameOrEmail(loginDto.getUsernameOrEmail(), loginDto.getUsernameOrEmail())
-                .orElseThrow(() ->
-                        new UsernameNotFoundException("Usuario no registrado: "+ loginDto.getUsernameOrEmail()));
+		//User user = this.userRepository.findByUsernameOrEmail(loginDto.getEmail(), loginDto.getEmail()).orElseThrow(() ->new AuthWSException("Usuario no registrado: "+ loginDto.getEmail()));
+		UserDetailsImpl user = this.userDetailsService.loadUserByUsername(loginDto.getEmail());
 		
+		if(!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
+			throw new AuthWSException("Usuario o password no valido");
+		}
 		
-		Authentication authentication = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                loginDto.getUsernameOrEmail(), loginDto.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+		//Set<GrantedAuthority> authorities  = new HashSet<GrantedAuthority>();
+		//authorities.add(new SimpleGrantedAuthority(user.getUserType().getName()));
+		
+		//Authentication authentication = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword(), authorities));
+		Authentication authentication = this.jwtTokenUtils.getAuthentication(user);
+		SecurityContextHolder.getContext().setAuthentication(authentication);
         
-        String token = JwtTokenUtils.createToken(loginDto.getUsernameOrEmail(), loginDto.getPassword()); //JwtTokenUtils.generateToken(authentication);
+		String token = this.jwtTokenUtils.createToken(user.getUsername(), loginDto.getEmail(), user.getUserType().getId()); //JwtTokenUtils.generateToken(authentication);
+        //TODO insertar token en redis con vencimiento en segundos
+        String tokenRefresh = jwtTokenUtils.signRefreshToken(user.getUsername());
 
-        return token;
+        return new JWTAuthResponse(token, tokenRefresh);
 	}
 	
 }
