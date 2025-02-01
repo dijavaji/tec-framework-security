@@ -20,7 +20,7 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService{
 	@Override
 	public UserDetailsImpl loadUserByUsername(String usernameOrEmail) throws AuthWSException {
 		User user = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
-                .orElseThrow(() -> new AuthWSException("Usuario no registrado: "+ usernameOrEmail));
+                .orElseThrow(() -> new AuthWSException(" Usuario o clave incorrectos: "+ usernameOrEmail));	//Usuario no registrado
 		//Set<GrantedAuthority> authorities = user.getRoles().stream().map((role) -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toSet());
 		//Set<GrantedAuthority> authorities  = new HashSet<GrantedAuthority>();
 		//authorities.add(new SimpleGrantedAuthority(user.getUserType().getName()));
