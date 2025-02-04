@@ -97,7 +97,7 @@ public class UserServiceImpl implements IUserService{
 		UserDetailsImpl user = this.userDetailsService.loadUserByUsername(loginDto.getEmail());
 		
 		if(!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
-			throw new AuthWSException("Usuario o password no valido");
+			throw new AuthWSException("Usuario o clave no valido");
 		}
 		
 		//Set<GrantedAuthority> authorities  = new HashSet<GrantedAuthority>();
