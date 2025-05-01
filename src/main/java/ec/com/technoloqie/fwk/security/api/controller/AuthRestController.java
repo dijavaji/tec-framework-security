@@ -26,7 +26,8 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@CrossOrigin(origins = {"http://127.0.0.1:3000"})
+//@CrossOrigin(origins = {"http://127.0.0.1:3000"})
+@CrossOrigin(origins = {"${ec.com.technoloqie.chatbot.app.url}"})
 @RestController
 @RequestMapping("${ec.com.technoloqie.fwk.security.api.prefix}/auth")
 public class AuthRestController {
