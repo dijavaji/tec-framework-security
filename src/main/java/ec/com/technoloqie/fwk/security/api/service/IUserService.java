@@ -16,4 +16,5 @@ public interface IUserService {
 	//CustomerDto updateUser(CustomerDto customer, int id);
 	//void deleteUser(Integer code);
 	JWTAuthResponse login(AuthCredential loginDto) throws AuthWSException;
+	UserDto getUserByUsernameOrEmail(String username, String email) throws AuthWSException;
 }

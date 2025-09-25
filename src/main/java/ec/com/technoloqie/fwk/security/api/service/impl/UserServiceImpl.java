@@ -3,7 +3,6 @@ package ec.com.technoloqie.fwk.security.api.service.impl;
 import java.util.Collection;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,24 +32,25 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class UserServiceImpl implements IUserService{
 	
-	@Autowired
 	private IUserRepository userRepository;
-	@Autowired
 	private IPersonRepository personRepo;
-	
-	@Autowired
 	private IUserTypeRepository userTypeRepo;
-	
-	@Autowired
     private PasswordEncoder passwordEncoder;
-	@Autowired
-	private AuthenticationManager authenticationManager;
-	
-	@Autowired
+	//private AuthenticationManager authenticationManager;
 	private JwtTokenUtils jwtTokenUtils;
-	
-	@Autowired
     private CustomUserDetailsServiceImpl userDetailsService;
+	
+	public UserServiceImpl(IUserRepository userRepository, IPersonRepository personRepo, IUserTypeRepository userTypeRepo,
+			PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtTokenUtils jwtTokenUtils,
+			CustomUserDetailsServiceImpl userDetailsService) {
+		this.userRepository = userRepository;
+		this.personRepo = personRepo;
+		this.userTypeRepo = userTypeRepo;
+		this.passwordEncoder = passwordEncoder;
+		//this.authenticationManager = authenticationManager;
+		this.jwtTokenUtils = jwtTokenUtils;
+		this.userDetailsService = userDetailsService;
+	}
 	
 	
 	@Override
@@ -113,5 +113,14 @@ public class UserServiceImpl implements IUserService{
 
         return new JWTAuthResponse(token, tokenRefresh);
 	}
+
+
+	@Override
+	public UserDto getUserByUsernameOrEmail(String username, String email) throws AuthWSException {
+		User user = userRepository.findByUsernameOrEmail(username, email)
+                .orElseThrow(() -> new AuthWSException(" Usuario o mail incorrectos: "+ username + email));	//Usuario no registrado
+		return UserMapper.mapToUserDto(user);
+	}
+
 	
 }

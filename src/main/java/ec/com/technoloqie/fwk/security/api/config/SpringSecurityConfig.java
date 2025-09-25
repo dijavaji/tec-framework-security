@@ -44,6 +44,7 @@ public class SpringSecurityConfig {
         http.csrf().disable()
         .authorizeHttpRequests()
         .requestMatchers("/api/v1/auth/**").permitAll()
+        .requestMatchers("/api/v1/users/**").permitAll()
         .anyRequest().authenticated()
 		.and()
 		//.httpBasic().and() //comentado por que se tiene personalizado
