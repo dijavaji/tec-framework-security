@@ -6,9 +6,17 @@ import ec.com.technoloqie.fwk.security.api.entity.User;
 
 public class UserMapper {
 	
+	private UserMapper() {
+		
+	}
+	
 	public static User mapToUser(UserDto userDto) {
-		return new User(
-				);
+		User user = new User();
+		user.setEmail(userDto.getEmail());
+		user.setUsername(userDto.getUsername());
+		user.setPass(userDto.getPassword());
+		user.setCreatedBy(userDto.getCreatedBy());
+		return user;
 	}
 	
 	public static UserDto mapToUserDto(User user) {
