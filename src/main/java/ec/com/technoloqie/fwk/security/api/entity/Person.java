@@ -65,7 +65,7 @@ public class Person implements Serializable{
 	private String createdBy;
 	
 	@Column(name="CREATEDDATE",nullable=false)
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
 	
 	@Column(name="MODIFIEDBY")
