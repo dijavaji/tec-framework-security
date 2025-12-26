@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import ec.com.technoloqie.fwk.security.api.dto.UserDto;
 import ec.com.technoloqie.fwk.security.api.dto.UserUpdateDto;
 import ec.com.technoloqie.fwk.security.api.service.IUserService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 /**
 * Controlador principal que expone el servicio a trav&eacute;s de HTTP/Rest para
@@ -65,11 +67,11 @@ public class UserRestController {
 	}
 	
 	@PutMapping("/{username}")
-	public ResponseEntity<?> updateUser(@RequestBody UserUpdateDto userDto, @PathVariable String username) {
+	public ResponseEntity<?> updateUser(@RequestBody UserUpdateDto userDto,@Valid @NotNull @PathVariable String username) {
 		Map<String, Object> response = new HashMap<>();
 		
 		try {
-			UserUpdateDto userUpdate  = this.userService.updateUser(userDto, username);
+			UserDto userUpdate  = this.userService.updateUser(userDto, username);
 			response.put("message", "Actualizado usuario correctamente");
 			response.put("data", userUpdate);
 			response.put("success", Boolean.TRUE);

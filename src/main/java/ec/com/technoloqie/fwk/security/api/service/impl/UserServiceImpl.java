@@ -128,7 +128,7 @@ public class UserServiceImpl implements IUserService{
 
 
 	@Override
-	public UserUpdateDto updateUser(UserUpdateDto userDto, String username) throws FwkSecurityException {
+	public UserDto updateUser(UserUpdateDto userDto, String username) throws FwkSecurityException {
 		
 		User userFound = this.userRepository.findByUsername(username).orElseThrow(()-> new FwkSecurityException("Error el usuario no existe")); //tenemos que comprobar si con la identificación dada existe en la db o no
 		if(StringUtils.isNotBlank(userDto.getCurrentPassword()) && StringUtils.isNotBlank(userDto.getNewPassword())) {
@@ -140,16 +140,15 @@ public class UserServiceImpl implements IUserService{
 			userFound.setPass(passwordEncoder.encode(userDto.getNewPassword()));
 		}else {
 			//User existCustomer = this.userRepository.findByUsername(username).orElseThrow(()-> new FwkSecurityException("Error el usuario no existe")); //tenemos que comprobar si con la identificación dada existe en la db o no
-			userFound.setStatus(userDto.getStatus());
-			userFound.setEmail(userDto.getEmail());
+			userFound.setStatus(userDto.getStatus() != null ? userDto.getStatus() : userFound.getStatus());
+			userFound.setEmail(StringUtils.isNotBlank(userDto.getEmail())? userDto.getEmail() : userFound.getEmail());
 			//this.userRepository.save(userFound);
 			//return UserMapper.mapToUserDto(existCustomer);
 		}
-		//SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		userFound.setModifiedBy(userDto.getModifiedBy());
 		userFound.setModifiedDate(new Date());
-		this.userRepository.save(userFound);
-		return userDto;
+		User updateUser = this.userRepository.save(userFound);
+		return UserMapper.mapToUserDto(updateUser);
 	}
 
 	

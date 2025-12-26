@@ -10,11 +10,9 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserUpdateDto {
 	
-	private String name;
 	private String email;
 	private String currentPassword;
 	private String newPassword;
-	private String createdBy;
 	private PersonDto person;
 	private String modifiedBy;
 	private Date modifiedDate;

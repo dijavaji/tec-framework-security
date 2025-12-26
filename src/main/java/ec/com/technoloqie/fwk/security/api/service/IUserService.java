@@ -20,5 +20,5 @@ public interface IUserService {
 	JWTAuthResponse login(AuthCredential loginDto) throws AuthWSException;
 	UserDto getUserByUsernameOrEmail(String username, String email) throws AuthWSException;
 	
-	UserUpdateDto updateUser(UserUpdateDto user, String username) throws FwkSecurityException;
+	UserDto updateUser(UserUpdateDto user, String username) throws FwkSecurityException;
 }
