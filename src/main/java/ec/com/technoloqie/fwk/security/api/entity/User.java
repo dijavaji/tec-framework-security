@@ -5,7 +5,6 @@ import java.util.Date;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -52,14 +51,14 @@ public class User implements Serializable{
 	private String createdBy;
 	
 	@Column(name="CREATEDDATE",nullable=false)
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
 	
 	@Column(name="MODIFIEDBY")
 	private String modifiedBy;
 	
 	@Column(name="MODIFIEDDATE")
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 	
 	@Column(name="STATUS")
