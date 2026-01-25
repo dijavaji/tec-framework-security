@@ -1,8 +1,10 @@
 package ec.com.technoloqie.fwk.security.api.service.impl;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,11 +13,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ec.com.technoloqie.fwk.security.api.commons.exception.AuthWSException;
+import ec.com.technoloqie.fwk.security.api.commons.exception.FwkSecurityException;
 import ec.com.technoloqie.fwk.security.api.commons.util.JwtTokenUtils;
 import ec.com.technoloqie.fwk.security.api.dto.AuthCredential;
 import ec.com.technoloqie.fwk.security.api.dto.JWTAuthResponse;
 import ec.com.technoloqie.fwk.security.api.dto.SignUpDto;
 import ec.com.technoloqie.fwk.security.api.dto.UserDto;
+import ec.com.technoloqie.fwk.security.api.dto.UserUpdateDto;
 import ec.com.technoloqie.fwk.security.api.entity.Person;
 import ec.com.technoloqie.fwk.security.api.entity.User;
 import ec.com.technoloqie.fwk.security.api.entity.UserDetailsImpl;
@@ -120,6 +124,31 @@ public class UserServiceImpl implements IUserService{
 		User user = userRepository.findByUsernameOrEmail(username, email)
                 .orElseThrow(() -> new AuthWSException(" Usuario o mail incorrectos: "+ username + email));	//Usuario no registrado
 		return UserMapper.mapToUserDto(user);
+	}
+
+
+	@Override
+	public UserDto updateUser(UserUpdateDto userDto, String username) throws FwkSecurityException {
+		
+		User userFound = this.userRepository.findByUsername(username).orElseThrow(()-> new FwkSecurityException("Error el usuario no existe")); //tenemos que comprobar si con la identificación dada existe en la db o no
+		if(StringUtils.isNotBlank(userDto.getCurrentPassword()) && StringUtils.isNotBlank(userDto.getNewPassword())) {
+			boolean passwordSucess = passwordEncoder.matches(userDto.getCurrentPassword(), userFound.getPass());
+			log.info("actualixo {} consulta {}", passwordSucess, userFound);
+			
+			if(!passwordSucess) throw new FwkSecurityException("Error contrase\u00f1a incorrecta");
+			
+			userFound.setPass(passwordEncoder.encode(userDto.getNewPassword()));
+		}else {
+			//User existCustomer = this.userRepository.findByUsername(username).orElseThrow(()-> new FwkSecurityException("Error el usuario no existe")); //tenemos que comprobar si con la identificación dada existe en la db o no
+			userFound.setStatus(userDto.getStatus() != null ? userDto.getStatus() : userFound.getStatus());
+			userFound.setEmail(StringUtils.isNotBlank(userDto.getEmail())? userDto.getEmail() : userFound.getEmail());
+			//this.userRepository.save(userFound);
+			//return UserMapper.mapToUserDto(existCustomer);
+		}
+		userFound.setModifiedBy(userDto.getModifiedBy());
+		userFound.setModifiedDate(new Date());
+		User updateUser = this.userRepository.save(userFound);
+		return UserMapper.mapToUserDto(updateUser);
 	}
 
 	
